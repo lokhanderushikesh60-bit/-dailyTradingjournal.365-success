@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Advanced trading journal for tracking trades, psychology, performance and discipline.">
+  <title>TradeVault — Trading Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div><strong>TradeVault</strong><span>Trading Journal</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="dashboard">⌂ <span>Dashboard</span></button>
+        <button class="nav-item" data-view="trades">▣ <span>Trade Journal</span></button>
+        <button class="nav-item" data-view="analytics">◒ <span>Analytics</span></button>
+        <button class="nav-item" data-view="psychology">◉ <span>Psychology</span></button>
+        <button class="nav-item" data-view="playbook">✦ <span>Playbook</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="exportBtn">↓ <span>Export Journal</span></button>
+        <button class="nav-item" id="importBtn">↑ <span>Import Journal</span></button>
+        <input type="file" id="fileInput" accept=".json" hidden>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu">☰</button>
+        <div>
+          <h1 id="pageTitle">Trading Dashboard</h1>
+          <p id="pageSubtitle">Review your process. Improve your edge.</p>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="themeBtn" title="Toggle theme">☾</button>
+          <button class="primary-btn" id="newTradeBtn">＋ New Trade</button>
+        </div>
+      </header>
+
+      <section class="view active" id="dashboard">
+        <div class="hero">
+          <div>
+            <span class="eyebrow">TRADER SCORECARD</span>
+            <h2>Trade the plan.<br><em>Review the process.</em></h2>
+            <p>Your journal turns every trade into feedback you can act on.</p>
+          </div>
+          <div class="score-ring"><span id="disciplineScore">--</span><small>Discipline</small></div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card"><span>Total P&L</span><strong id="totalPnl">₹0</strong><small id="pnlTrend">No trades yet</small></article>
+          <article class="stat-card"><span>Win Rate</span><strong id="winRate">0%</strong><small>Closed trades</small></article>
+          <article class="stat-card"><span>Profit Factor</span><strong id="profitFactor">0.00</strong><small>Gross profit / loss</small></article>
+          <article class="stat-card"><span>Expectancy</span><strong id="expectancy">₹0</strong><small>Average per trade</small></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel chart-panel">
+            <div class="panel-head"><div><h3>Equity Curve</h3><span>Account performance</span></div><span class="badge" id="monthBadge">This month</span></div>
+            <canvas id="equityChart" height="250"></canvas>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><div><h3>Recent Trades</h3><span>Latest journal entries</span></div><button class="text-btn" data-view-link="trades">View all →</button></div>
+            <div id="recentTrades" class="trade-list"></div>
+          </article>
+        </div>
+
+        <div class="dashboard-grid lower">
+          <article class="panel">
+            <div class="panel-head"><div><h3>Performance by Setup</h3><span>Find your real edge</span></div></div>
+            <div id="setupPerformance"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><div><h3>Psychology Check</h3><span>How you trade matters</span></div></div>
+            <div class="psych-mini">
+              <div><span>Discipline</span><b id="dashDiscipline">—</b></div>
+              <div><span>FOMO control</span><b id="dashFomo">—</b></div>
+              <div><span>Plan adherence</span><b id="dashPlan">—</b></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="trades">
+        <div class="section-head"><div><span class="eyebrow">YOUR DATA</span><h2>Trade Journal</h2><p>Capture the trade, the reason, and the lesson.</p></div><button class="primary-btn" id="newTradeBtn2">＋ Add Trade</button></div>
+        <div class="filter-bar">
+          <input id="searchTrades" placeholder="Search symbol, setup, notes...">
+          <select id="resultFilter"><option value="all">All results</option><option value="win">Winners</option><option value="loss">Losers</option></select>
+          <select id="directionFilter"><option value="all">All directions</option><option value="Long">Long</option><option value="Short">Short</option></select>
+        </div>
+        <div class="panel table-wrap">
+          <table><thead><tr><th>Date</th><th>Symbol</th><th>Side</th><th>Setup</th><th>Entry</th><th>Exit</th><th>P&L</th><th>R</th><th>Psychology</th><th></th></tr></thead>
+          <tbody id="tradeTable"></tbody></table>
+        </div>
+      </section>
+
+      <section class="view" id="analytics">
+        <div class="section-head"><div><span class="eyebrow">DATA → EDGE</span><h2>Analytics</h2><p>Use evidence, not emotion, to improve your trading.</p></div></div>
+        <div class="stats-grid analytics-stats">
+          <article class="stat-card"><span>Best Trade</span><strong id="bestTrade">₹0</strong></article>
+          <article class="stat-card"><span>Worst Trade</span><strong id="worstTrade">₹0</strong></article>
+          <article class="stat-card"><span>Avg Winner</span><strong id="avgWin">₹0</strong></article>
+          <article class="stat-card"><span>Avg Loser</span><strong id="avgLoss">₹0</strong></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel"><div class="panel-head"><div><h3>Win/Loss Distribution</h3><span>Every closed trade</span></div></div><canvas id="resultChart" height="280"></canvas></article>
+          <article class="panel"><div class="panel-head"><div><h3>Day of Week</h3><span>Where your results happen</span></div></div><div id="dayPerformance"></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="psychology">
+        <div class="section-head"><div><span class="eyebrow">MINDSET</span><h2>Psychology Journal</h2><p>Track the mental state behind your decisions.</p></div></div>
+        <div class="dashboard-grid">
+          <article class="panel psychology-card">
+            <h3>Pre-trade checklist</h3>
+            <label><input type="checkbox" class="psy-check"> I have a clear setup.</label>
+            <label><input type="checkbox" class="psy-check"> Risk is defined before entry.</label>
+            <label><input type="checkbox" class="psy-check"> I am not trading from FOMO.</label>
+            <label><input type="checkbox" class="psy-check"> Market conditions match my plan.</label>
+            <label><input type="checkbox" class="psy-check"> I accept the loss before entering.</label>
+            <button class="secondary-btn" id="savePsych">Save today's check</button>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><div><h3>Psychology Log</h3><span>Your recurring patterns</span></div></div>
+            <div id="psychLog" class="log-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="playbook">
+        <div class="section-head"><div><span class="eyebrow">YOUR EDGE</span><h2>Trading Playbook</h2><p>Define the rules you want to follow consistently.</p></div><button class="primary-btn" id="addRuleBtn">＋ Add Rule</button></div>
+        <div id="rulesGrid" class="rules-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="tradeModal">
+    <form class="modal" id="tradeForm">
+      <div class="modal-head"><div><span class="eyebrow">JOURNAL ENTRY</span><h2>Add Trade</h2></div><button type="button" class="close-btn" id="closeModal">×</button></div>
+      <div class="form-grid">
+        <label>Date<input type="date" id="fDate" required></label>
+        <label>Symbol<input id="fSymbol" placeholder="BTCUSDT / NIFTY" required></label>
+        <label>Direction<select id="fDirection"><option>Long</option><option>Short</option></select></label>
+        <label>Setup<input id="fSetup" placeholder="Liquidity sweep"></label>
+        <label>Entry<input type="number" step="any" id="fEntry" required></label>
+        <label>Exit<input type="number" step="any" id="fExit" required></label>
+        <label>Quantity<input type="number" step="any" id="fQty" value="1"></label>
+        <label>Risk (₹)<input type="number" step="any" id="fRisk" value="100"></label>
+        <label>P&L (₹)<input type="number" step="any" id="fPnl" placeholder="Optional — auto calculated"></label>
+        <label>Emotion<select id="fEmotion"><option>Calm</option><option>Confident</option><option>FOMO</option><option>Fear</option><option>Revenge</option><option>Greed</option></select></label>
+        <label>Plan followed?<select id="fPlan"><option>Yes</option><option>No</option></select></label>
+        <label>Confidence (1–10)<input type="number" min="1" max="10" id="fConfidence" value="7"></label>
+      </div>
+      <label class="full">Trade notes<textarea id="fNotes" rows="4" placeholder="Why did you enter? What happened? What will you repeat or avoid?"></textarea></label>
+      <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn">Save Trade</button></div>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
