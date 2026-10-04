@@ -114,7 +114,11 @@ function drawResults(){
 function renderPsych(){
  $("#psychLog").innerHTML=state.psych.length?[...state.psych].reverse().slice(0,10).map(x=>`<div class="log-item"><b>${x.score}% checklist</b><br><span>${x.date} · ${x.note}</span></div>`).join(""):`<div class="empty">No psychology check-ins yet.</div>`;
 }
-$("#savePsych").onclick=()=>{const checks=[...$$(".psy-check")],score=Math.round(checks.filter(x=>x.checked).length/checks.length*100);state.psych.push({date:new Date().toISOString().slice(0,10),score,note:score===100?"Full plan readiness":"Review the unchecked items before trading"});save();renderPsych()};
+$("#savePsych").onclick=()=>{const checks=[...$(".psy-check")],score=Math.round(checks.filter(x=>x.checked).length/checks.length*100);state.psych.push({date:new Date().toISOString().slice(0,10),score,note:score===100?"Full plan readiness":"Review the unchecked items before trading"});save();renderPsych()};
+function openPsychModal(){ $("#psychModal").classList.add("show"); $("#pDate").value=new Date().toISOString().slice(0,10) }
+function closePsychModal(){ $("#psychModal").classList.remove("show") }
+$("#addPsychBtn").onclick=openPsychModal; $("#closePsychModal").onclick=closePsychModal; $("#cancelPsychModal").onclick=closePsychModal;
+$("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round(discipline*10),mood,confidence,discipline,note});save();e.target.reset();closePsychModal();renderPsych()};
 function renderRules(){
  $("#rulesGrid").innerHTML=state.rules.map((r,i)=>`<article class="rule-card"><button onclick="deleteRule(${i})">×</button><h3>${r.title}</h3><p>${r.text}</p></article>`).join("");
 }
