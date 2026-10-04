@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forex Position Size Calculator | TradeVault</title>
+<meta name="description" content="Estimate forex position size using account risk and stop-loss distance. Free educational trading calculator from TradeVault.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://lokhanderushikesh60-bit.github.io/-dailyTradingjournal.365-success/forex-position-size-calculator.html">
+<link rel="stylesheet" href="style.css">
+<style>.tool{max-width:760px;margin:40px auto;padding:24px}.tool input{width:100%;padding:12px;margin:7px 0 14px;box-sizing:border-box}.tool button{padding:12px 18px;cursor:pointer}.result{margin-top:18px;padding:16px;border:1px solid #ccc;font-weight:700}.note{opacity:.8}</style>
+</head><body><main class="tool"><p><a href="index.html">← TradeVault</a></p>
+<h1>Forex Position Size Calculator</h1><p>Estimate forex position size using account risk and stop-loss distance.</p>
+<div id="fields"></div><button onclick="calc()">Calculate</button><div id="result" class="result">Enter your values.</div>
+<h2>How to use this calculator</h2><p>Use the result as an educational planning aid. Your actual risk can differ because of fees, slippage, leverage, contract specifications and market conditions.</p>
+<p class="note"><strong>Risk warning:</strong> Trading involves substantial risk of loss. This calculator does not provide financial advice or guarantee profits.</p>
+<p><a href="calculators.html">All calculators</a> · <a href="blog/index.html">Trading education</a> · <a href="index.html">Trading journal</a></p></main>
+<script>
+const f=document.getElementById('fields');
+function inp(id,label,ph){f.innerHTML+=`<label>${label}<input id="${id}" type="number" step="any" placeholder="${ph}"></label>`;}
+inp("a","Account size","10000");inp("r","Risk per trade (%)","1");inp("e","Entry price","100");inp("s","Stop price","98");function calc(){let a=+document.getElementById("a").value,r=+document.getElementById("r").value/100,e=+document.getElementById("e").value,s=+document.getElementById("s").value,d=Math.abs(e-s),cash=a*r,size=d?cash/d:0;document.getElementById("result").textContent=d>0?"Cash risk: "+cash.toFixed(2)+" | Position size: "+size.toFixed(4)+" units":"Entry and stop must differ.";}</script></body></html>
