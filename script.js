@@ -112,13 +112,33 @@ function drawResults(){
  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--text");ctx.font="600 13px Inter";ctx.textAlign="center";ctx.fillText(`Winners ${c.wins.length}`,w/2-barW/2-10,h-15);ctx.fillText(`Losers ${c.losses.length}`,w/2+barW/2+10,h-15);
 }
 function renderPsych(){
- $("#psychLog").innerHTML=state.psych.length?[...state.psych].reverse().slice(0,10).map(x=>`<div class="log-item"><b>${x.score}% checklist</b><br><span>${x.date} · ${x.note}</span></div>`).join(""):`<div class="empty">No psychology check-ins yet.</div>`;
+ const logs=[...state.psych].reverse().slice(0,10), latest=logs[0];
+ $("#psychScore").textContent=latest?((latest.score||0)+"%"):"0%";
+ const avg=logs.length?Math.round(logs.reduce((a,x)=>a+(x.discipline||x.score/10||0),0)/logs.length):0;
+ $("#psychDiscipline").textContent=logs.length?avg+"/10":"—";
+ const fomoCount=logs.filter(x=>x.mood==="FOMO"||x.fomo==="High").length;
+ $("#psychFomo").textContent=logs.length?Math.max(0,Math.round((1-fomoCount/logs.length)*100))+"%":"—";
+ const counts={FOMO:0,Revenge:0,Fear:0,Greed:0,Anxious:0};
+ logs.forEach(x=>{if(counts[x.mood]!==undefined)counts[x.mood]++;if(x.revenge==="High")counts.Revenge++});
+ const mistake=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+ $("#psychMistake").textContent=mistake&&mistake[1]?mistake[0]:"—";
+ $("#psychLog").innerHTML=logs.length?logs.map(x=>`<div class="log-item"><b>${x.score||0}% psychology score</b><br><span>${x.date} · ${x.mood||"Checklist"} · Confidence ${x.confidence||"—"}/10 · Discipline ${x.discipline||Math.round((x.score||0)/10)}/10</span><br><small>${x.note||""}</small></div>`).join(""):`<div class="empty">No psychology check-ins yet.</div>`;
+ $("#psychInsight").innerHTML=latest?`<p><strong>Latest mood:</strong> ${latest.mood||"Not recorded"}.</p><p><strong>Reflection:</strong> ${latest.note||"Add a reflection after your session."}</p>`:`<p>Start your first psychology check-in. Track mood, confidence, discipline, FOMO and revenge urges to discover patterns over time.</p>`;
+ drawPsychChart();
 }
 $("#savePsych").onclick=()=>{const checks=[...$(".psy-check")],score=Math.round(checks.filter(x=>x.checked).length/checks.length*100);state.psych.push({date:new Date().toISOString().slice(0,10),score,note:score===100?"Full plan readiness":"Review the unchecked items before trading"});save();renderPsych()};
 function openPsychModal(){ $("#psychModal").classList.add("show"); $("#pDate").value=new Date().toISOString().slice(0,10) }
 function closePsychModal(){ $("#psychModal").classList.remove("show") }
 $("#addPsychBtn").onclick=openPsychModal; $("#closePsychModal").onclick=closePsychModal; $("#cancelPsychModal").onclick=closePsychModal;
-$("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round(discipline*10),mood,confidence,discipline,note});save();e.target.reset();closePsychModal();renderPsych()};
+$("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round((discipline+confidence)/2*10),mood,confidence,discipline,fomo:mood==="FOMO"?"High":"Low",note});save();e.target.reset();closePsychModal();renderPsych()};
+function drawPsychChart(){
+ const c=$("#psychChart");if(!c)return;const ctx=c.getContext("2d"),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight||230;c.width=w*d;c.height=h*d;ctx.scale(d,d);ctx.clearRect(0,0,w,h);
+ const logs=state.psych.slice(-7);if(!logs.length){ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--muted");ctx.fillText("Add psychology check-ins to see your trend.",20,h/2);return}
+ const max=10,step=w/Math.max(logs.length-1,1);ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--line");for(let i=1;i<5;i++){let y=i*h/5;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
+ ctx.strokeStyle="#635bff";ctx.lineWidth=3;ctx.beginPath();logs.forEach((x,i)=>{const v=x.discipline||Math.round((x.score||0)/10),px=i*step,py=h-30-(v/max)*(h-55);i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke();
+}
+$("#saveQuickPsych").onclick=()=>{const f=$("#quickFomo").value,r=$("#quickRevenge").value,e=$("#quickEnergy").value,s=$("#quickSleep").value;state.psych.push({date:new Date().toISOString().slice(0,10),score:Math.round(((f==="Low"?10:f==="Medium"?6:2)+(r==="Low"?10:r==="Medium"?6:2)+(e==="High"?10:e==="Normal"?7:4)+(s==="Good"?10:s==="Average"?7:4))/4*10),mood:f==="High"?"FOMO":r==="High"?"Revenge":"Calm",confidence:e==="High"?9:e==="Normal"?7:4,discipline:s==="Good"?9:s==="Average"?7:4,fomo:f,revenge:r,energy:e,sleep:s,note:`FOMO: ${f} · Revenge urge: ${r} · Energy: ${e} · Sleep: ${s}`});save();renderPsych()};
+
 function renderRules(){
  $("#rulesGrid").innerHTML=state.rules.map((r,i)=>`<article class="rule-card"><button onclick="deleteRule(${i})">×</button><h3>${r.title}</h3><p>${r.text}</p></article>`).join("");
 }
