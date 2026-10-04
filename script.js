@@ -52,7 +52,27 @@ function renderDashboard(){
  const plan=avg(planScores);
  $("#disciplineScore").textContent=psych.length?discipline+"%":"—"; $("#dashDiscipline").textContent=psych.length?discipline+"%":"—";
  $("#dashFomo").textContent=fomoScores.length?fomo+"%":"—"; $("#dashPlan").textContent=planScores.length?plan+"%":"—";
- renderRecent(); renderSetups(); renderCharts();
+ renderRecent(); renderSetups(); renderTradePsychologyDashboard(); renderCharts();
+}
+function renderTradePsychologyDashboard(){
+ const trades=(state.trades||[]).filter(t=>t.outcome||t.reason);
+ const analysed=trades.length;
+ const score=analysed?Math.round(trades.reduce((sum,t)=>sum+(t.outcome==="Target Hit"?100:t.outcome==="Breakeven"?70:t.outcome==="SL Hit"?40:50),0)/analysed):0;
+ const positive=analysed?Math.round(trades.filter(t=>t.outcome==="Target Hit").length/analysed*100):0;
+ const psychologyLosses=analysed?Math.round(trades.filter(t=>t.outcome==="SL Hit"&&t.reason&&t.reason!=="Setup failed despite following plan").length/analysed*100):0;
+ const negative=trades.filter(t=>t.outcome==="SL Hit"&&t.reason&&t.reason!=="Setup failed despite following plan");
+ const counts={};negative.forEach(t=>{counts[t.reason]=(counts[t.reason]||0)+1});
+ const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+ const $id=id=>document.getElementById(id);
+ if($id("dashPsychOverall"))$id("dashPsychOverall").textContent=analysed?score+"%":"—";
+ if($id("dashPsychTrades"))$id("dashPsychTrades").textContent=analysed;
+ if($id("dashPsychPositive"))$id("dashPsychPositive").textContent=positive+"%";
+ if($id("dashPsychLoss"))$id("dashPsychLoss").textContent=psychologyLosses+"%";
+ if($id("dashPsychMistake"))$id("dashPsychMistake").textContent=top[0]?top[0][0]:"—";
+ if($id("dashPsychInsight")){
+   $id("dashPsychInsight").textContent=!analysed?"Add trades with a result and psychological reason to see your overall pattern.":top[0]?"Your most common issue is \"" + top[0][0] + "\" (" + top[0][1] + " trade" + (top[0][1]>1?"s":"") + "). Focus on preventing this before your next entry.":"No recurring psychological mistake detected in the recorded trades.";
+ }
+ if($id("dashPsychMistakes"))$id("dashPsychMistakes").innerHTML=top.length?top.slice(0,6).map(([reason,count])=>"<div class=\"mistake-row\"><span>"+reason+"</span><b>"+count+"</b></div>").join(""):"<div class=\"empty\">No SL-hit psychology data yet.</div>";
 }
 function renderRecent(){
  const box=$("#recentTrades"); const arr=[...state.trades].reverse().slice(0,6);
