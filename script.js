@@ -26,8 +26,8 @@ function nav(view){
  const titles={dashboard:["Trading Dashboard","Review your process. Improve your edge."],trades:["Trade Journal","Capture the trade, the reason, and the lesson."],analytics:["Analytics","Turn your trading history into measurable feedback."],psychology:["Psychology","Your mindset is part of your trading system."],playbook:["Trading Playbook","Define the rules you want to follow consistently."]};
  $("#pageTitle").textContent=titles[view][0]; $("#pageSubtitle").textContent=titles[view][1];
  if(innerWidth<760) $("#sidebar").classList.remove("open");
- if(view==="dashboard") initPostTradePsych();
-renderDashboard();
+ if(view==="psychology") initPostTradePsych();
+ renderDashboard();
  if(view==="trades") renderTable();
  if(view==="analytics") renderAnalytics();
  if(view==="psychology") renderPsych();
@@ -120,7 +120,7 @@ function updateChecklistUI(){const checks=[...document.querySelectorAll(".psy-ch
 document.addEventListener("change",e=>{if(e.target.classList.contains("psy-check"))updateChecklistUI()});document.getElementById("resetPsychChecks")?.addEventListener("click",()=>{document.querySelectorAll(".psy-check").forEach(x=>x.checked=false);updateChecklistUI()});updateChecklistUI();
 function initPostTradePsych(){
  const out=$("#postTradeOutcome"), reason=$("#postTradeReason"), hint=$("#postTradeHint"), saveBtn=$("#savePostTradePsych");
- if(!out||!reason)return;
+ if(!out||!reason||!saveBtn)return;
  const update=()=>{
    fillReasonSelect(reason,out.value);
    if(hint) hint.textContent=out.value==="SL Hit"?"SL hit selected: identify the psychological or execution mistake — or choose “Setup failed despite following plan” if it was a valid planned loss.":out.value==="Target Hit"?"Target hit selected: record the positive behavior that helped you execute the plan.":"Breakeven selected: record why the trade was protected or closed at breakeven.";
@@ -170,6 +170,7 @@ function closePsychModal(){ $("#psychModal").classList.remove("show") }
 $("#pOutcome")?.addEventListener("change",updatePsychReasons);
 $("#fOutcome")?.addEventListener("change",updateTradeReasons);
 updateTradeReasons();
+initPostTradePsych();
 $("#addPsychBtn").onclick=openPsychModal; $("#closePsychModal").onclick=closePsychModal; $("#cancelPsychModal").onclick=closePsychModal;
 $("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,outcome=$("#pOutcome").value,reason=$("#pReason").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round((discipline+confidence)/2*10),mood,confidence,discipline,outcome,reason,fomo:mood==="FOMO"?"High":"Low",note});save();e.target.reset();closePsychModal();renderPsych()};
 function drawPsychChart(){
