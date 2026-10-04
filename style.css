@@ -13,8 +13,3 @@
 .check-category label{display:flex;align-items:flex-start;gap:9px;padding:8px 5px;border-radius:9px;cursor:pointer;font-size:13px;line-height:1.35}.check-category label:hover{background:rgba(128,128,128,.08)}.check-category input{margin-top:2px;accent-color:var(--accent,#22c55e);width:16px;height:16px;flex:none}
 @media(max-width:650px){.check-category{padding:11px}.check-category label{font-size:12.5px}.checklist-summary strong{font-size:21px}}
 
-/* Dark mode: Quick Mental Check and form controls */
-html.dark .mental-check-card, body.dark .mental-check-card, .dark .mental-check-card{background:#111827!important;color:#e5e7eb!important;border-color:#374151!important}
-html.dark .mental-check-card input, html.dark .mental-check-card select, html.dark .mental-check-card textarea, body.dark .mental-check-card input, body.dark .mental-check-card select, body.dark .mental-check-card textarea, .dark .mental-check-card input, .dark .mental-check-card select, .dark .mental-check-card textarea{background:#1f2937!important;color:#f3f4f6!important;border-color:#4b5563!important;color-scheme:dark}
-html.dark .mental-check-card option, body.dark .mental-check-card option, .dark .mental-check-card option{background:#1f2937!important;color:#f3f4f6!important}
-html.dark .mental-check-card input::placeholder, html.dark .mental-check-card textarea::placeholder, body.dark .mental-check-card input::placeholder, body.dark .mental-check-card textarea::placeholder, .dark .mental-check-card input::placeholder, .dark .mental-check-card textarea::placeholder{color:#9ca3af!important}
