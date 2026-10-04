@@ -133,10 +133,21 @@ function renderPsych(){
  drawPsychChart();
 }
 $("#savePsych").onclick=()=>{const checks=[...$(".psy-check")],score=Math.round(checks.filter(x=>x.checked).length/checks.length*100);state.psych.push({date:new Date().toISOString().slice(0,10),score,note:score===100?"Full plan readiness":"Review the unchecked items before trading"});save();renderPsych()};
-function openPsychModal(){ $("#psychModal").classList.add("show"); $("#pDate").value=new Date().toISOString().slice(0,10) }
+const psychReasons={
+"Target Hit":["Followed my plan","Waited for confirmation","Stayed patient","Managed risk correctly","Followed entry rules","Followed exit rules","Stayed disciplined","Did not chase price","Stayed calm","Trusted my tested setup","Took profit according to plan","Avoided overtrading","Good market reading","Good execution","Accepted the planned outcome"],
+"SL Hit":["Entered too early","Entered too late","FOMO entry","Revenge trade","Chased price","Ignored my setup rules","Ignored confirmation","Wrong market direction","Misread market structure","Wrong support/resistance","Stop-loss too tight","Stop-loss placed poorly","Position size too large","Risk was too high","Moved stop-loss","Removed/ignored stop-loss","Entered during high volatility","Ignored important news","Poor liquidity/slippage","Overtraded","Boredom trade","Fear-based entry","Greed-based entry","Low confidence","Low focus","Poor sleep/low energy","Emotional decision","Did not accept the loss","Added to losing trade","Ignored higher timeframe","Ignored invalidation","Entered without a clear thesis","Setup was not actually valid","Changed plan impulsively","Trading outside my system","Market condition changed","Unexpected market move","Setup failed despite following plan"],
+"Breakeven":["Protected capital as planned","Moved to breakeven according to rules","Market lacked follow-through","Took defensive exit","Setup became invalid","Reduced risk correctly"],
+"No Trade":["No valid setup","Waited for confirmation","Risk/reward was poor","Market too volatile","Important news ahead","Emotional state not suitable","Daily loss limit reached","No time to manage trade","Followed my no-trade rule"]
+};
+function updatePsychReasons(){
+ const out=$("#pOutcome"), reason=$("#pReason"); if(!out||!reason)return;
+ reason.innerHTML=psychReasons[out.value].map(x=>`<option>${x}</option>`).join("");
+}
+function openPsychModal(){ $("#psychModal").classList.add("show"); $("#pDate").value=new Date().toISOString().slice(0,10); updatePsychReasons() }
 function closePsychModal(){ $("#psychModal").classList.remove("show") }
+$("#pOutcome")?.addEventListener("change",updatePsychReasons);
 $("#addPsychBtn").onclick=openPsychModal; $("#closePsychModal").onclick=closePsychModal; $("#cancelPsychModal").onclick=closePsychModal;
-$("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round((discipline+confidence)/2*10),mood,confidence,discipline,fomo:mood==="FOMO"?"High":"Low",note});save();e.target.reset();closePsychModal();renderPsych()};
+$("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,outcome=$("#pOutcome").value,reason=$("#pReason").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round((discipline+confidence)/2*10),mood,confidence,discipline,outcome,reason,fomo:mood==="FOMO"?"High":"Low",note});save();e.target.reset();closePsychModal();renderPsych()};
 function drawPsychChart(){
  const c=$("#psychChart");if(!c)return;const ctx=c.getContext("2d"),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight||230;c.width=w*d;c.height=h*d;ctx.scale(d,d);ctx.clearRect(0,0,w,h);
  const logs=state.psych.slice(-7);if(!logs.length){ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--muted");ctx.fillText("Add psychology check-ins to see your trend.",20,h/2);return}
