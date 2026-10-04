@@ -3,8 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Advanced trading journal for tracking trades, psychology, performance and discipline.">
-  <title>TradeVault — Trading Journal</title>
+  <meta name="description" content="Free trading journal for tracking trades, psychology, risk, performance and discipline. Includes free trading calculators and practical trading education.">
+  <meta name="keywords" content="trading journal, free trading journal, trading psychology, risk management, position size calculator, risk reward calculator, trading performance">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="TradeVault — Free Trading Journal">
+  <meta property="og:description" content="Track trades, measure your edge, improve discipline and use free trading calculators.">
+  <meta property="og:type" content="website">
+  <title>TradeVault — Free Trading Journal & Risk Tools</title>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"TradeVault","applicationCategory":"FinanceApplication","description":"Free browser-based trading journal with performance analytics, psychology tracking and trading calculators.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,6 +31,8 @@
         <button class="nav-item" data-view="analytics">◒ <span>Analytics</span></button>
         <button class="nav-item" data-view="psychology">◉ <span>Psychology</span></button>
         <button class="nav-item" data-view="playbook">✦ <span>Playbook</span></button>
+        <a class="nav-item public-link" href="calculators.html">🧮 <span>Free Calculators</span></a>
+        <a class="nav-item public-link" href="blog/trading-psychology.html">📚 <span>Trading Guides</span></a>
       </nav>
       <div class="sidebar-bottom">
         <button class="nav-item" id="exportBtn">↓ <span>Export Journal</span></button>
@@ -86,6 +96,38 @@
             </div>
           </article>
         </div>
+      
+
+        <section class="growth-section">
+          <div class="growth-head">
+            <div>
+              <span class="eyebrow">FREE RESOURCES</span>
+              <h2>Tools that help you trade with a process</h2>
+              <p>Use the journal for your data, then use these free resources to improve risk and decision-making.</p>
+            </div>
+            <a class="secondary-btn growth-link" href="calculators.html">Explore all tools →</a>
+          </div>
+          <div class="growth-grid">
+            <a class="growth-card" href="calculators.html#position-size">
+              <span class="growth-icon">⚖</span><h3>Position Size Calculator</h3>
+              <p>Calculate quantity from account size, risk and stop distance.</p><b>Calculate free →</b>
+            </a>
+            <a class="growth-card" href="calculators.html#risk-reward">
+              <span class="growth-icon">↗</span><h3>Risk / Reward Calculator</h3>
+              <p>Compare entry, stop and target before taking a trade.</p><b>Calculate free →</b>
+            </a>
+            <a class="growth-card" href="blog/trading-psychology.html">
+              <span class="growth-icon">◉</span><h3>Trading Psychology Guide</h3>
+              <p>Learn how FOMO, revenge trading and overconfidence affect execution.</p><b>Read guide →</b>
+            </a>
+          </div>
+          <div class="seo-copy">
+            <h2>Why keep a trading journal?</h2>
+            <p>A trading journal turns individual trades into a dataset you can review. Instead of judging yourself by one winning or losing trade, you can measure win rate, expectancy, profit factor, setup performance and plan adherence over a larger sample.</p>
+            <p>TradeVault is designed to keep that process simple: record the setup, entry, exit, risk, result and psychology, then review the patterns. The journal runs in your browser and lets you export your data as JSON.</p>
+            <p><strong>Risk note:</strong> These tools are educational calculators, not financial advice. Trading involves substantial risk, and no calculator or journal can guarantee profits.</p>
+          </div>
+        </section>
       </section>
 
       <section class="view" id="trades">
@@ -140,6 +182,10 @@
       </section>
     </main>
   </div>
+  <footer class="site-footer">
+    <div><strong>TradeVault</strong> — free trading journal and educational tools.</div>
+    <div><a href="calculators.html">Calculators</a><a href="blog/trading-psychology.html">Psychology</a><a href="blog/risk-management.html">Risk Management</a></div>
+  </footer>
 
   <div class="modal-backdrop" id="tradeModal">
     <form class="modal" id="tradeForm">
