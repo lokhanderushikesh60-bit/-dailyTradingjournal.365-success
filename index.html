@@ -160,6 +160,12 @@
 
       <section class="view" id="psychology">
         <div class="section-head"><div><span class="eyebrow">MINDSET</span><h2>Psychology Journal</h2><p>Track the mental state behind your decisions.</p></div><button class="primary-btn" id="addPsychBtn">＋ Add Psychology</button></div>
+        <div class="stats-grid psychology-stats">
+          <article class="stat-card"><span>Daily Psychology Score</span><strong id="psychScore">0%</strong><small>Latest check-in</small></article>
+          <article class="stat-card"><span>FOMO Control</span><strong id="psychFomo">—</strong><small>Based on recent entries</small></article>
+          <article class="stat-card"><span>Discipline</span><strong id="psychDiscipline">—</strong><small>Average check-in</small></article>
+          <article class="stat-card"><span>Most Common Mistake</span><strong id="psychMistake">—</strong><small>From your psychology log</small></article>
+        </div>
         <div class="dashboard-grid">
           <article class="panel psychology-card">
             <h3>Pre-trade checklist</h3>
@@ -174,6 +180,26 @@
             <div class="panel-head"><div><h3>Psychology Log</h3><span>Your recurring patterns</span></div></div>
             <div id="psychLog" class="log-list"></div>
           </article>
+        </div>
+        <div class="dashboard-grid lower">
+          <article class="panel">
+            <div class="panel-head"><div><h3>Psychology Trends</h3><span>Confidence, discipline and emotional control</span></div></div>
+            <canvas id="psychChart" height="230"></canvas>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><div><h3>Daily Reflection</h3><span>Build awareness before the next session</span></div></div>
+            <div id="psychInsight" class="seo-copy"></div>
+          </article>
+        </div>
+        <div class="panel psychology-extra">
+          <div class="panel-head"><div><h3>Quick Mental Check</h3><span>Log the factors that can affect execution</span></div></div>
+          <div class="psych-quick-grid">
+            <label>FOMO <select id="quickFomo"><option>Low</option><option>Medium</option><option>High</option></select></label>
+            <label>Revenge urge <select id="quickRevenge"><option>Low</option><option>Medium</option><option>High</option></select></label>
+            <label>Energy <select id="quickEnergy"><option>High</option><option>Normal</option><option>Low</option></select></label>
+            <label>Sleep <select id="quickSleep"><option>Good</option><option>Average</option><option>Poor</option></select></label>
+          </div>
+          <button class="secondary-btn" id="saveQuickPsych">Save mental check</button>
         </div>
       </section>
 
