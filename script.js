@@ -111,6 +111,8 @@ function drawResults(){
  ctx.fillStyle="#d92d20";ctx.fillRect(w/2+10,h-40,barW,-(h-80)*(c.losses.length/total));
  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--text");ctx.font="600 13px Inter";ctx.textAlign="center";ctx.fillText(`Winners ${c.wins.length}`,w/2-barW/2-10,h-15);ctx.fillText(`Losers ${c.losses.length}`,w/2+barW/2+10,h-15);
 }
+function updateChecklistUI(){const checks=[...document.querySelectorAll(".psy-check")];const done=checks.filter(x=>x.checked).length;const pct=checks.length?Math.round(done/checks.length*100):0;const p=document.getElementById("checklistProgress"),bar=document.getElementById("checkProgressBar");if(p)p.textContent=pct+"%";if(bar)bar.style.width=pct+"%";document.querySelectorAll(".check-category").forEach(c=>{const a=[...c.querySelectorAll(".psy-check")],d=a.filter(x=>x.checked).length,s=c.querySelector(".category-score");if(s)s.textContent=d+"/"+a.length})}
+document.addEventListener("change",e=>{if(e.target.classList.contains("psy-check"))updateChecklistUI()});document.getElementById("resetPsychChecks")?.addEventListener("click",()=>{document.querySelectorAll(".psy-check").forEach(x=>x.checked=false);updateChecklistUI()});updateChecklistUI();
 function renderPsych(){
  const logs=[...state.psych].reverse().slice(0,10), latest=logs[0];
  $("#psychScore").textContent=latest?((latest.score||0)+"%"):"0%";
