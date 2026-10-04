@@ -159,6 +159,15 @@ function renderPsych(){
  $("#psychDiscipline").textContent=logs.length?avg+"/10":"—";
  const fomoCount=logs.filter(x=>x.mood==="FOMO"||x.fomo==="High").length;
  $("#psychFomo").textContent=logs.length?Math.max(0,Math.round((1-fomoCount/logs.length)*100))+"%":"—";
+ const greedScores=logs.map(x=>{
+   const mood=String(x.mood||"").toLowerCase();
+   const reason=String(x.reason||"").toLowerCase();
+   if(mood==="greedy") return 2;
+   if(/greed|overtraded|overtrade|added to losing|position size too large|risk was too high|took profit too early|chased price/.test(reason)) return 5;
+   return 10;
+ });
+ const greedAvg=greedScores.length?Math.round(greedScores.reduce((a,b)=>a+b,0)/greedScores.length*10):0;
+ $("#psychGreed").textContent=logs.length?greedAvg+"%":"—";
  const counts={FOMO:0,Revenge:0,Fear:0,Greed:0,Anxious:0};
  logs.forEach(x=>{if(counts[x.mood]!==undefined)counts[x.mood]++;if(x.revenge==="High")counts.Revenge++});
  const mistake=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
