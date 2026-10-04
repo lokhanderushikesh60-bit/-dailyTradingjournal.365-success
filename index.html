@@ -159,7 +159,7 @@
       </section>
 
       <section class="view" id="psychology">
-        <div class="section-head"><div><span class="eyebrow">MINDSET</span><h2>Psychology Journal</h2><p>Track the mental state behind your decisions.</p></div></div>
+        <div class="section-head"><div><span class="eyebrow">MINDSET</span><h2>Psychology Journal</h2><p>Track the mental state behind your decisions.</p></div><button class="primary-btn" id="addPsychBtn">＋ Add Psychology</button></div>
         <div class="dashboard-grid">
           <article class="panel psychology-card">
             <h3>Pre-trade checklist</h3>
@@ -207,6 +207,20 @@
       </div>
       <label class="full">Trade notes<textarea id="fNotes" rows="4" placeholder="Why did you enter? What happened? What will you repeat or avoid?"></textarea></label>
       <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn">Save Trade</button></div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="psychModal">
+    <form class="modal" id="psychForm">
+      <div class="modal-head"><div><span class="eyebrow">MINDSET ENTRY</span><h2>Add Psychology</h2></div><button type="button" class="close-btn" id="closePsychModal">×</button></div>
+      <div class="form-grid">
+        <label>Date<input type="date" id="pDate" required></label>
+        <label>Mood<select id="pMood"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Fearful</option><option>FOMO</option><option>Greedy</option><option>Revenge</option></select></label>
+        <label>Confidence (1–10)<input type="number" min="1" max="10" id="pConfidence" value="7"></label>
+        <label>Discipline (1–10)<input type="number" min="1" max="10" id="pDiscipline" value="7"></label>
+      </div>
+      <label class="full">What happened?<textarea id="pNote" rows="4" placeholder="What were you feeling? What triggered it? What will you do differently next time?"></textarea></label>
+      <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelPsychModal">Cancel</button><button class="primary-btn">Save Psychology</button></div>
     </form>
   </div>
 
