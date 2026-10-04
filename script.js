@@ -26,7 +26,8 @@ function nav(view){
  const titles={dashboard:["Trading Dashboard","Review your process. Improve your edge."],trades:["Trade Journal","Capture the trade, the reason, and the lesson."],analytics:["Analytics","Turn your trading history into measurable feedback."],psychology:["Psychology","Your mindset is part of your trading system."],playbook:["Trading Playbook","Define the rules you want to follow consistently."]};
  $("#pageTitle").textContent=titles[view][0]; $("#pageSubtitle").textContent=titles[view][1];
  if(innerWidth<760) $("#sidebar").classList.remove("open");
- if(view==="dashboard") renderDashboard();
+ if(view==="dashboard") initPostTradePsych();
+renderDashboard();
  if(view==="trades") renderTable();
  if(view==="analytics") renderAnalytics();
  if(view==="psychology") renderPsych();
@@ -117,6 +118,20 @@ function drawResults(){
 }
 function updateChecklistUI(){const checks=[...document.querySelectorAll(".psy-check")];const done=checks.filter(x=>x.checked).length;const pct=checks.length?Math.round(done/checks.length*100):0;const p=document.getElementById("checklistProgress"),bar=document.getElementById("checkProgressBar");if(p)p.textContent=pct+"%";if(bar)bar.style.width=pct+"%";document.querySelectorAll(".check-category").forEach(c=>{const a=[...c.querySelectorAll(".psy-check")],d=a.filter(x=>x.checked).length,s=c.querySelector(".category-score");if(s)s.textContent=d+"/"+a.length})}
 document.addEventListener("change",e=>{if(e.target.classList.contains("psy-check"))updateChecklistUI()});document.getElementById("resetPsychChecks")?.addEventListener("click",()=>{document.querySelectorAll(".psy-check").forEach(x=>x.checked=false);updateChecklistUI()});updateChecklistUI();
+function initPostTradePsych(){
+ const out=$("#postTradeOutcome"), reason=$("#postTradeReason"), hint=$("#postTradeHint"), saveBtn=$("#savePostTradePsych");
+ if(!out||!reason)return;
+ const update=()=>{
+   fillReasonSelect(reason,out.value);
+   if(hint) hint.textContent=out.value==="SL Hit"?"SL hit selected: identify the psychological or execution mistake — or choose “Setup failed despite following plan” if it was a valid planned loss.":out.value==="Target Hit"?"Target hit selected: record the positive behavior that helped you execute the plan.":"Breakeven selected: record why the trade was protected or closed at breakeven.";
+ };
+ out.onchange=update; update();
+ if(saveBtn) saveBtn.onclick=()=>{
+   const outcome=out.value, rsn=reason.value;
+   state.psych.push({date:new Date().toISOString().slice(0,10),score:outcome==="Target Hit"?100:outcome==="Breakeven"?70:40,mood:outcome==="SL Hit"?"Review":"Calm",confidence:outcome==="Target Hit"?8:6,discipline:outcome==="Target Hit"?9:outcome==="Breakeven"?7:4,outcome,reason:rsn,fomo:"Low",note:`Trade Result: ${outcome} · Psychological Reason: ${rsn}`});
+   save(); renderPsych();
+ };
+}
 function renderPsych(){
  const logs=[...state.psych].reverse().slice(0,10), latest=logs[0];
  $("#psychScore").textContent=latest?((latest.score||0)+"%"):"0%";
