@@ -42,11 +42,15 @@ function renderDashboard(){
  $("#totalPnl").textContent=money(c.pnl); $("#totalPnl").className=c.pnl>=0?"positive":"negative";
  $("#winRate").textContent=c.winRate.toFixed(1)+"%"; $("#profitFactor").textContent=c.pf.toFixed(2); $("#expectancy").textContent=money(c.exp);
  $("#pnlTrend").textContent=state.trades.length?`${state.trades.length} journaled trade${state.trades.length>1?"s":""}`:"No trades yet";
- const discipline=state.trades.length?Math.round(state.trades.reduce((a,t)=>a+(t.plan==="Yes"?1:0),0)/state.trades.length*100):0;
- $("#disciplineScore").textContent=discipline+"%"; $("#dashDiscipline").textContent=discipline+"%";
- const fomo=state.trades.length?Math.round(state.trades.reduce((a,t)=>a+(t.emotion==="FOMO"?0:1),0)/state.trades.length*100):0;
- const plan=discipline;
- $("#dashFomo").textContent=fomo+"%"; $("#dashPlan").textContent=plan+"%";
+ const psych=state.psych||[];
+ const avg=(arr)=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length):0;
+ const discipline=avg(psych.map(x=>Number(x.discipline)||Math.round((Number(x.score)||0)/10)).filter(x=>x>0));
+ const fomoScores=psych.map(x=>x.fomo==="Low"?10:x.fomo==="Medium"?6:x.fomo==="High"?2:null).filter(x=>x!==null);
+ const fomo=avg(fomoScores);
+ const planScores=psych.map(x=>Number(x.score)).filter(x=>Number.isFinite(x)&&x>=0);
+ const plan=avg(planScores);
+ $("#disciplineScore").textContent=psych.length?discipline+"%":"—"; $("#dashDiscipline").textContent=psych.length?discipline+"%":"—";
+ $("#dashFomo").textContent=fomoScores.length?fomo+"%":"—"; $("#dashPlan").textContent=planScores.length?plan+"%":"—";
  renderRecent(); renderSetups(); renderCharts();
 }
 function renderRecent(){
