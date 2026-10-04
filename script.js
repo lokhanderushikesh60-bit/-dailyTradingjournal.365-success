@@ -78,7 +78,7 @@ $("#tradeForm").onsubmit=e=>{
  e.preventDefault();
  const entry=+$("#fEntry").value, exit=+$("#fExit").value, qty=+$("#fQty").value||1, risk=+$("#fRisk").value||1;
  let pnl=$("#fPnl").value===""?($("#fDirection").value==="Long"?(exit-entry):(entry-exit))*qty:+$("#fPnl").value;
- const t={id:crypto.randomUUID(),date:$("#fDate").value,symbol:$("#fSymbol").value.toUpperCase(),direction:$("#fDirection").value,setup:$("#fSetup").value.trim(),entry,exit,qty,risk,pnl,emotion:$("#fEmotion").value,plan:$("#fPlan").value,confidence:+$("#fConfidence").value,notes:$("#fNotes").value.trim(),r:pnl/risk};
+ const t={id:crypto.randomUUID(),date:$("#fDate").value,symbol:$("#fSymbol").value.toUpperCase(),direction:$("#fDirection").value,setup:$("#fSetup").value.trim(),entry,exit,qty,risk,pnl,emotion:$("#fEmotion").value,outcome:$("#fOutcome").value,reason:$("#fReason").value,plan:$("#fPlan").value,confidence:+$("#fConfidence").value,notes:$("#fNotes").value.trim(),r:pnl/risk};
  state.trades.push(t);save();e.target.reset();closeModal();renderDashboard();nav("trades");
 };
 
@@ -136,16 +136,25 @@ $("#savePsych").onclick=()=>{const checks=[...$(".psy-check")],score=Math.round(
 const psychReasons={
 "Target Hit":["Followed my plan","Waited for confirmation","Stayed patient","Managed risk correctly","Followed entry rules","Followed exit rules","Stayed disciplined","Did not chase price","Stayed calm","Trusted my tested setup","Took profit according to plan","Avoided overtrading","Good market reading","Good execution","Accepted the planned outcome"],
 "SL Hit":["Entered too early","Entered too late","FOMO entry","Revenge trade","Chased price","Ignored my setup rules","Ignored confirmation","Wrong market direction","Misread market structure","Wrong support/resistance","Stop-loss too tight","Stop-loss placed poorly","Position size too large","Risk was too high","Moved stop-loss","Removed/ignored stop-loss","Entered during high volatility","Ignored important news","Poor liquidity/slippage","Overtraded","Boredom trade","Fear-based entry","Greed-based entry","Low confidence","Low focus","Poor sleep/low energy","Emotional decision","Did not accept the loss","Added to losing trade","Ignored higher timeframe","Ignored invalidation","Entered without a clear thesis","Setup was not actually valid","Changed plan impulsively","Trading outside my system","Market condition changed","Unexpected market move","Setup failed despite following plan"],
-"Breakeven":["Protected capital as planned","Moved to breakeven according to rules","Market lacked follow-through","Took defensive exit","Setup became invalid","Reduced risk correctly"],
-"No Trade":["No valid setup","Waited for confirmation","Risk/reward was poor","Market too volatile","Important news ahead","Emotional state not suitable","Daily loss limit reached","No time to manage trade","Followed my no-trade rule"]
+"Breakeven":["Protected capital as planned","Moved to breakeven according to rules","Market lacked follow-through","Took defensive exit","Setup became invalid","Reduced risk correctly"]
 };
+function fillReasonSelect(select, outcome){
+ if(!select)return;
+ select.innerHTML=(psychReasons[outcome]||[]).map(x=>`<option>${x}</option>`).join("");
+}
 function updatePsychReasons(){
  const out=$("#pOutcome"), reason=$("#pReason"); if(!out||!reason)return;
- reason.innerHTML=psychReasons[out.value].map(x=>`<option>${x}</option>`).join("");
+ fillReasonSelect(reason,out.value);
+}
+function updateTradeReasons(){
+ const out=$("#fOutcome"), reason=$("#fReason"); if(!out||!reason)return;
+ fillReasonSelect(reason,out.value);
 }
 function openPsychModal(){ $("#psychModal").classList.add("show"); $("#pDate").value=new Date().toISOString().slice(0,10); updatePsychReasons() }
 function closePsychModal(){ $("#psychModal").classList.remove("show") }
 $("#pOutcome")?.addEventListener("change",updatePsychReasons);
+$("#fOutcome")?.addEventListener("change",updateTradeReasons);
+updateTradeReasons();
 $("#addPsychBtn").onclick=openPsychModal; $("#closePsychModal").onclick=closePsychModal; $("#cancelPsychModal").onclick=closePsychModal;
 $("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,outcome=$("#pOutcome").value,reason=$("#pReason").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round((discipline+confidence)/2*10),mood,confidence,discipline,outcome,reason,fomo:mood==="FOMO"?"High":"Low",note});save();e.target.reset();closePsychModal();renderPsych()};
 function drawPsychChart(){
