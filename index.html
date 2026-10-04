@@ -238,9 +238,16 @@
       <div class="modal-head"><div><span class="eyebrow">MINDSET ENTRY</span><h2>Add Psychology</h2></div><button type="button" class="close-btn" id="closePsychModal">×</button></div>
       <div class="form-grid">
         <label>Date<input type="date" id="pDate" required></label>
+        <label>Trade Result<select id="pOutcome">
+          <option value="Target Hit">🎯 Target Hit</option>
+          <option value="SL Hit">🛑 SL Hit</option>
+          <option value="Breakeven">⚖️ Breakeven</option>
+          <option value="No Trade">⏸️ No Trade</option>
+        </select></label>
         <label>Mood<select id="pMood"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Fearful</option><option>FOMO</option><option>Greedy</option><option>Revenge</option></select></label>
         <label>Confidence (1–10)<input type="number" min="1" max="10" id="pConfidence" value="7"></label>
         <label>Discipline (1–10)<input type="number" min="1" max="10" id="pDiscipline" value="7"></label>
+        <label class="full">Psychological Reason<select id="pReason"></select></label>
       </div>
       <label class="full">What happened?<textarea id="pNote" rows="4" placeholder="What were you feeling? What triggered it? What will you do differently next time?"></textarea></label>
       <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelPsychModal">Cancel</button><button class="primary-btn">Save Psychology</button></div>
