@@ -166,7 +166,25 @@
           <article class="stat-card"><span>Discipline</span><strong id="psychDiscipline">—</strong><small>Average check-in</small></article>
           <article class="stat-card"><span>Most Common Mistake</span><strong id="psychMistake">—</strong><small>From your psychology log</small></article>
         </div>
-        <div class="dashboard-grid">
+        <article class="panel psychology-card post-trade-psychology">
+            <div class="panel-head"><div><span class="eyebrow">POST-TRADE</span><h3>Trade Psychology Reason</h3><span>Select what happened after the trade. The available reasons change with the result.</span></div></div>
+            <div class="form-grid">
+              <label>Trade Result
+                <select id="postTradeOutcome">
+                  <option value="Target Hit">🎯 Target Hit</option>
+                  <option value="SL Hit">🛑 SL Hit</option>
+                  <option value="Breakeven">⚖️ Breakeven</option>
+                </select>
+              </label>
+              <label>Psychological Reason
+                <select id="postTradeReason"></select>
+              </label>
+            </div>
+            <div class="reason-hint" id="postTradeHint"></div>
+            <button class="primary-btn" id="savePostTradePsych">Save Trade Psychology</button>
+          </article>
+
+          <div class="dashboard-grid">
           <article class="panel psychology-card">
             <div class="panel-head"><div><span class="eyebrow">PRE-TRADE</span><h3>60+ Point Trading Readiness Checklist</h3><span>Complete the checks before entering. A green checklist does not guarantee a profitable trade.</span></div></div>
             <div class="checklist-summary"><strong id="checklistProgress">0%</strong><span>Overall readiness</span><div class="check-progress"><i id="checkProgressBar"></i></div></div>
