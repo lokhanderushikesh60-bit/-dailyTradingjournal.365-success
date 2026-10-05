@@ -1,3 +1,4 @@
+// TradeVault journal engine — robust save version
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const KEY="tradevault_v1";
 let state=JSON.parse(localStorage.getItem(KEY)||"null")||{
@@ -62,13 +63,42 @@ function deleteTrade(id){if(confirm("Delete this journal entry?")){state.trades=
 function openModal(){ $("#tradeModal").classList.add("show"); $("#fDate").value=new Date().toISOString().slice(0,10)}
 function closeModal(){$("#tradeModal").classList.remove("show")}
 $("#newTradeBtn").onclick=openModal;$("#newTradeBtn2").onclick=openModal;$("#closeModal").onclick=closeModal;$("#cancelModal").onclick=closeModal;
-$("#tradeForm").onsubmit=e=>{
+$("#tradeForm").addEventListener("submit",e=>{
  e.preventDefault();
- const entry=+$("#fEntry").value, exit=+$("#fExit").value, qty=+$("#fQty").value||1, risk=+$("#fRisk").value||1;
- let pnl=$("#fPnl").value===""?($("#fDirection").value==="Long"?(exit-entry):(entry-exit))*qty:+$("#fPnl").value;
- const t={id:crypto.randomUUID(),date:$("#fDate").value,symbol:$("#fSymbol").value.toUpperCase(),direction:$("#fDirection").value,setup:$("#fSetup").value.trim(),entry,exit,qty,risk,pnl,outcome:$("#fOutcome").value,plan:$("#fPlan").value,confidence:+$("#fConfidence").value,notes:$("#fNotes").value.trim(),r:pnl/risk};
- state.trades.push(t);save();e.target.reset();closeModal();renderDashboard();nav("trades");
-};
+ try{
+  const symbol=$("#fSymbol").value.trim().toUpperCase();
+  const date=$("#fDate").value;
+  const direction=$("#fDirection").value;
+  const entry=Number($("#fEntry").value), exit=Number($("#fExit").value);
+  const qty=Number($("#fQty").value)||1, risk=Number($("#fRisk").value)||1;
+  if(!symbol || !date || !Number.isFinite(entry) || !Number.isFinite(exit)){
+   alert("Please enter Date, Symbol, Entry and Exit.");
+   return;
+  }
+  if(qty<=0 || risk<=0){ alert("Quantity and Risk must be greater than 0."); return; }
+  const rawPnl=$("#fPnl").value.trim();
+  const pnl=rawPnl==="" ? (direction==="Long"?(exit-entry):(entry-exit))*qty : Number(rawPnl);
+  if(!Number.isFinite(pnl)){ alert("Please enter a valid P&L."); return; }
+  const t={
+   id:(crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2)),
+   date,symbol,direction,setup:$("#fSetup").value.trim(),entry,exit,qty,risk,pnl,
+   outcome:$("#fOutcome").value,plan:$("#fPlan").value,confidence:Number($("#fConfidence").value)||7,
+   notes:$("#fNotes").value.trim(),r:pnl/risk
+  };
+  state.trades.push(t);
+  save();
+  e.target.reset();
+  $("#fDate").value=new Date().toISOString().slice(0,10);
+  closeModal();
+  renderDashboard();
+  renderTable();
+  renderAnalytics();
+  nav("trades");
+ }catch(err){
+  console.error("Trade save failed:",err);
+  alert("Trade could not be saved. Please try again.");
+ }
+});
 
 function renderAnalytics(){
  const c=calc(), t=state.trades;
