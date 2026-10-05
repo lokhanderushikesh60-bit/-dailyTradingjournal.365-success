@@ -172,7 +172,7 @@ function renderPsych(){
  logs.forEach(x=>{if(counts[x.mood]!==undefined)counts[x.mood]++;if(x.revenge==="High")counts.Revenge++});
  const mistake=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
  $("#psychMistake").textContent=mistake&&mistake[1]?mistake[0]:"—";
- $("#psychLog").innerHTML=logs.length?logs.map(x=>`<div class="log-item"><b>${x.score||0}% psychology score</b><br><span>${x.date} · ${x.mood||"Checklist"} · Confidence ${x.confidence||"—"}/10 · Discipline ${x.discipline||Math.round((x.score||0)/10)}/10</span><br><small>${x.note||""}</small></div>`).join(""):`<div class="empty">No psychology check-ins yet.</div>`;
+ 
  $("#psychInsight").innerHTML=latest?`<p><strong>Latest mood:</strong> ${latest.mood||"Not recorded"}.</p><p><strong>Reflection:</strong> ${latest.note||"Add a reflection after your session."}</p>`:`<p>Start your first psychology check-in. Track mood, confidence, discipline, FOMO and revenge urges to discover patterns over time.</p>`;
  drawPsychChart();
 }
