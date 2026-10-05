@@ -4,15 +4,15 @@
   <meta name="google-site-verification" content="v70ZaOMh1ovSTU-RW5MchteGKUnjLkdiRvJET0_NW-c" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free trading journal for tracking trades, psychology, risk, performance and discipline. Includes free trading calculators and practical trading education.">
-  <meta name="keywords" content="trading journal, free trading journal, trading psychology, risk management, position size calculator, risk reward calculator, trading performance">
+  <meta name="description" content="Free trading journal for tracking trades, risk, performance and discipline. Includes free trading calculators and practical trading education.">
+  <meta name="keywords" content="trading journal, free trading journal, risk management, position size calculator, risk reward calculator, trading performance">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="TradeVault — Free Trading Journal">
   <meta property="og:description" content="Track trades, measure your edge, improve discipline and use free trading calculators.">
   <meta property="og:type" content="website">
   <title>TradeVault — Free Trading Journal & Risk Tools</title>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebApplication","name":"TradeVault","applicationCategory":"FinanceApplication","description":"Free browser-based trading journal with performance analytics, psychology tracking and trading calculators.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  {"@context":"https://schema.org","@type":"WebApplication","name":"TradeVault","applicationCategory":"FinanceApplication","description":"Free browser-based trading journal with performance analytics, trading performance and trading calculators.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,6 @@
         <button class="nav-item active" data-view="dashboard">⌂ <span>Dashboard</span></button>
         <button class="nav-item" data-view="trades">▣ <span>Trade Journal</span></button>
         <button class="nav-item" data-view="analytics">◒ <span>Analytics</span></button>
-        <button class="nav-item" data-view="psychology">◉ <span>Psychology</span></button>
         <button class="nav-item" data-view="playbook">✦ <span>Playbook</span></button>
         <a class="nav-item public-link" href="calculators.html">🧮 <span>Free Calculators</span></a>
         <a class="nav-item public-link" href="blog/trading-psychology.html">📚 <span>Trading Guides</span></a>
@@ -81,27 +80,7 @@
             <div class="panel-head"><div><h3>Recent Trades</h3><span>Latest journal entries</span></div><button class="text-btn" data-view-link="trades">View all →</button></div>
             <div id="recentTrades" class="trade-list"></div>
           </article>
-        </div>
-
-        <div class="dashboard-grid lower">
-          <article class="panel">
-            <div class="panel-head"><div><h3>Performance by Setup</h3><span>Find your real edge</span></div></div>
-            <div id="setupPerformance"></div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><h3>Psychology Check</h3><span>How you trade matters</span></div></div>
-            <div class="psych-mini">
-              <div><span>Discipline</span><b id="dashDiscipline">—</b></div>
-              <div><span>FOMO control</span><b id="dashFomo">—</b></div>
-              <div><span>Plan adherence</span><b id="dashPlan">—</b></div>
-            </div>
-          </article>
-        </div>
-
-        <div class="dashboard-grid psychology-overview-grid">
-          <article class="panel">
-            <div class="panel-head"><div><span class="eyebrow">OVERALL TRADE PSYCHOLOGY</span><h3>Psychology Performance</h3><span>Calculated from your recorded trade outcomes and reasons.</span></div><button class="text-btn" data-view-link="psychology">Open Psychology →</button></div>
-            <div class="psych-overview-score"><strong id="dashPsychOverall">—</strong><span>Overall psychology score</span></div>
+        </div><div class="psych-overview-score"><strong id="dashPsychOverall">—</strong><span>Overall psychology score</span></div>
             <div class="psych-overview-grid">
               <div><b id="dashPsychTrades">0</b><span>Trades analysed</span></div>
               <div><b id="dashPsychPositive">0%</b><span>Positive execution</span></div>
@@ -135,15 +114,11 @@
               <span class="growth-icon">↗</span><h3>Risk / Reward Calculator</h3>
               <p>Compare entry, stop and target before taking a trade.</p><b>Calculate free →</b>
             </a>
-            <a class="growth-card" href="blog/trading-psychology.html">
-              <span class="growth-icon">◉</span><h3>Trading Psychology Guide</h3>
-              <p>Learn how FOMO, revenge trading and overconfidence affect execution.</p><b>Read guide →</b>
-            </a>
           </div>
           <div class="seo-copy">
             <h2>Why keep a trading journal?</h2>
             <p>A trading journal turns individual trades into a dataset you can review. Instead of judging yourself by one winning or losing trade, you can measure win rate, expectancy, profit factor, setup performance and plan adherence over a larger sample.</p>
-            <p>TradeVault is designed to keep that process simple: record the setup, entry, exit, risk, result and psychology, then review the patterns. The journal runs in your browser and lets you export your data as JSON.</p>
+            <p>TradeVault is designed to keep that process simple: record the setup, entry, exit, risk and result, then review the patterns. The journal runs in your browser and lets you export your data as JSON.</p>
             <p><strong>Risk note:</strong> These tools are educational calculators, not financial advice. Trading involves substantial risk, and no calculator or journal can guarantee profits.</p>
           </div>
         </section>
@@ -157,7 +132,7 @@
           <select id="directionFilter"><option value="all">All directions</option><option value="Long">Long</option><option value="Short">Short</option></select>
         </div>
         <div class="panel table-wrap">
-          <table><thead><tr><th>Date</th><th>Symbol</th><th>Side</th><th>Setup</th><th>Entry</th><th>Exit</th><th>P&L</th><th>R</th><th>Psychology</th><th></th></tr></thead>
+          <table><thead><tr><th>Date</th><th>Symbol</th><th>Side</th><th>Setup</th><th>Entry</th><th>Exit</th><th>P&L</th><th>R</th><th></th></tr></thead>
           <tbody id="tradeTable"></tbody></table>
         </div>
       </section>
@@ -175,37 +150,6 @@
           <article class="panel"><div class="panel-head"><div><h3>Day of Week</h3><span>Where your results happen</span></div></div><div id="dayPerformance"></div></article>
         </div>
       </section>
-
-      <section class="view" id="psychology">
-        <div class="section-head"><div><span class="eyebrow">MINDSET</span><h2>Psychology Journal</h2><p>Track the mental state behind your decisions.</p></div><button class="primary-btn" id="addPsychBtn">＋ Add Psychology</button></div>
-        <div class="stats-grid psychology-stats">
-          <article class="stat-card"><span>Daily Psychology Score</span><strong id="psychScore">0%</strong><small>Latest check-in</small></article>
-          <article class="stat-card"><span>FOMO Control</span><strong id="psychFomo">—</strong><small>Based on recent entries</small></article>
-          <article class="stat-card"><span>Discipline</span><strong id="psychDiscipline">—</strong><small>Average check-in</small></article>
-          <article class="stat-card"><span>Greed Control</span><strong id="psychGreed">—</strong><small>Average across psychology logs</small></article>
-          <article class="stat-card"><span>Most Common Mistake</span><strong id="psychMistake">—</strong><small>From your psychology log</small></article>
-        </div>
-        <article class="panel psychology-card post-trade-psychology">
-            <div class="panel-head"><div><span class="eyebrow">POST-TRADE</span><h3>Trade Psychology Reason</h3><span>Select what happened after the trade. The available reasons change with the result.</span></div></div>
-            <div class="form-grid">
-              <label>Trade Result
-                <select id="postTradeOutcome">
-                  <option value="Target Hit">🎯 Target Hit</option>
-                  <option value="SL Hit">🛑 SL Hit</option>
-                  <option value="Breakeven">⚖️ Breakeven</option>
-                </select>
-              </label>
-              <label>Psychological Reason
-                <select id="postTradeReason"></select>
-              </label>
-            </div>
-            <div class="reason-hint" id="postTradeHint"></div>
-            <button class="primary-btn" id="savePostTradePsych">Save Trade Psychology</button>
-          </article>
-
-        </div>
-      </section>
-
       <section class="view" id="playbook">
         <div class="section-head"><div><span class="eyebrow">YOUR EDGE</span><h2>Trading Playbook</h2><p>Define the rules you want to follow consistently.</p></div><button class="primary-btn" id="addRuleBtn">＋ Add Rule</button></div>
         <div id="rulesGrid" class="rules-grid"></div>
@@ -214,7 +158,7 @@
   </div>
   <footer class="site-footer">
     <div><strong>TradeVault</strong> — free trading journal and educational tools.</div>
-    <div><a href="calculators.html">Calculators</a><a href="blog/trading-psychology.html">Psychology</a><a href="blog/risk-management.html">Risk Management</a></div>
+    <div><a href="calculators.html">Calculators</a><a href="blog/risk-management.html">Risk Management</a></div>
   </footer>
 
   <div class="modal-backdrop" id="tradeModal">
@@ -231,8 +175,6 @@
         <label>Risk (₹)<input type="number" step="any" id="fRisk" value="100"></label>
         <label>P&L (₹)<input type="number" step="any" id="fPnl" placeholder="Optional — auto calculated"></label>
         <label>Trade Result<select id="fOutcome"><option value="Target Hit">🎯 Target Hit</option><option value="SL Hit">🛑 SL Hit</option><option value="Breakeven">⚖️ Breakeven</option></select></label>
-        <label>Psychological Reason<select id="fReason"></select></label>
-        <label>Emotion<select id="fEmotion"><option>Calm</option><option>Confident</option><option>FOMO</option><option>Fear</option><option>Revenge</option><option>Greed</option></select></label>
         <label>Plan followed?<select id="fPlan"><option>Yes</option><option>No</option></select></label>
         <label>Confidence (1–10)<input type="number" min="1" max="10" id="fConfidence" value="7"></label>
       </div>
@@ -240,28 +182,6 @@
       <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelModal">Cancel</button><button class="primary-btn">Save Trade</button></div>
     </form>
   </div>
-
-  <div class="modal-backdrop" id="psychModal">
-    <form class="modal" id="psychForm">
-      <div class="modal-head"><div><span class="eyebrow">MINDSET ENTRY</span><h2>Add Psychology</h2></div><button type="button" class="close-btn" id="closePsychModal">×</button></div>
-      <div class="form-grid">
-        <label>Date<input type="date" id="pDate" required></label>
-        <label>Trade Result<select id="pOutcome">
-          <option value="Target Hit">🎯 Target Hit</option>
-          <option value="SL Hit">🛑 SL Hit</option>
-          <option value="Breakeven">⚖️ Breakeven</option>
-          <option value="No Trade">⏸️ No Trade</option>
-        </select></label>
-        <label>Mood<select id="pMood"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Fearful</option><option>FOMO</option><option>Greedy</option><option>Revenge</option></select></label>
-        <label>Confidence (1–10)<input type="number" min="1" max="10" id="pConfidence" value="7"></label>
-        <label>Discipline (1–10)<input type="number" min="1" max="10" id="pDiscipline" value="7"></label>
-        <label class="full">Psychological Reason<select id="pReason"></select></label>
-      </div>
-      <label class="full">What happened?<textarea id="pNote" rows="4" placeholder="What were you feeling? What triggered it? What will you do differently next time?"></textarea></label>
-      <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelPsychModal">Cancel</button><button class="primary-btn">Save Psychology</button></div>
-    </form>
-  </div>
-
   <script src="script.js"></script>
 </body>
 </html>
