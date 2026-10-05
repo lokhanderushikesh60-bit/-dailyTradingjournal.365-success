@@ -2,7 +2,6 @@ const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const KEY="tradevault_v1";
 let state=JSON.parse(localStorage.getItem(KEY)||"null")||{
  trades:[],
- psych:[],
  rules:[
   {title:"Risk first",text:"Never risk more than my predefined amount on one idea."},
   {title:"Wait for confirmation",text:"No entry without a setup, trigger and invalidation."},
@@ -23,14 +22,12 @@ function calc(){
 function nav(view){
  $$(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
  $$(".view").forEach(x=>x.classList.toggle("active",x.id===view));
- const titles={dashboard:["Trading Dashboard","Review your process. Improve your edge."],trades:["Trade Journal","Capture the trade, the reason, and the lesson."],analytics:["Analytics","Turn your trading history into measurable feedback."],psychology:["Psychology","Your mindset is part of your trading system."],playbook:["Trading Playbook","Define the rules you want to follow consistently."]};
+ const titles={dashboard:["Trading Dashboard","Review your process. Improve your edge."],trades:["Trade Journal","Capture the trade, the reason, and the lesson."],analytics:["Analytics","Turn your trading history into measurable feedback."],playbook:["Trading Playbook","Define the rules you want to follow consistently."]};
  $("#pageTitle").textContent=titles[view][0]; $("#pageSubtitle").textContent=titles[view][1];
  if(innerWidth<760) $("#sidebar").classList.remove("open");
- if(view==="psychology") initPostTradePsych();
  renderDashboard();
  if(view==="trades") renderTable();
  if(view==="analytics") renderAnalytics();
- if(view==="psychology") renderPsych();
  if(view==="playbook") renderRules();
 }
 $$(".nav-item[data-view]").forEach(b=>b.onclick=()=>nav(b.dataset.view));
@@ -42,37 +39,7 @@ function renderDashboard(){
  const c=calc();
  $("#totalPnl").textContent=money(c.pnl); $("#totalPnl").className=c.pnl>=0?"positive":"negative";
  $("#winRate").textContent=c.winRate.toFixed(1)+"%"; $("#profitFactor").textContent=c.pf.toFixed(2); $("#expectancy").textContent=money(c.exp);
- $("#pnlTrend").textContent=state.trades.length?`${state.trades.length} journaled trade${state.trades.length>1?"s":""}`:"No trades yet";
- const psych=state.psych||[];
- const avg=(arr)=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length):0;
- const discipline=avg(psych.map(x=>Number(x.discipline)||Math.round((Number(x.score)||0)/10)).filter(x=>x>0));
- const fomoScores=psych.map(x=>x.fomo==="Low"?10:x.fomo==="Medium"?6:x.fomo==="High"?2:null).filter(x=>x!==null);
- const fomo=avg(fomoScores);
- const planScores=psych.map(x=>Number(x.score)).filter(x=>Number.isFinite(x)&&x>=0);
- const plan=avg(planScores);
- $("#disciplineScore").textContent=psych.length?discipline+"%":"—"; $("#dashDiscipline").textContent=psych.length?discipline+"%":"—";
- $("#dashFomo").textContent=fomoScores.length?fomo+"%":"—"; $("#dashPlan").textContent=planScores.length?plan+"%":"—";
- renderRecent(); renderSetups(); renderTradePsychologyDashboard(); renderCharts();
-}
-function renderTradePsychologyDashboard(){
- const trades=(state.trades||[]).filter(t=>t.outcome||t.reason);
- const analysed=trades.length;
- const score=analysed?Math.round(trades.reduce((sum,t)=>sum+(t.outcome==="Target Hit"?100:t.outcome==="Breakeven"?70:t.outcome==="SL Hit"?40:50),0)/analysed):0;
- const positive=analysed?Math.round(trades.filter(t=>t.outcome==="Target Hit").length/analysed*100):0;
- const psychologyLosses=analysed?Math.round(trades.filter(t=>t.outcome==="SL Hit"&&t.reason&&t.reason!=="Setup failed despite following plan").length/analysed*100):0;
- const negative=trades.filter(t=>t.outcome==="SL Hit"&&t.reason&&t.reason!=="Setup failed despite following plan");
- const counts={};negative.forEach(t=>{counts[t.reason]=(counts[t.reason]||0)+1});
- const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
- const $id=id=>document.getElementById(id);
- if($id("dashPsychOverall"))$id("dashPsychOverall").textContent=analysed?score+"%":"—";
- if($id("dashPsychTrades"))$id("dashPsychTrades").textContent=analysed;
- if($id("dashPsychPositive"))$id("dashPsychPositive").textContent=positive+"%";
- if($id("dashPsychLoss"))$id("dashPsychLoss").textContent=psychologyLosses+"%";
- if($id("dashPsychMistake"))$id("dashPsychMistake").textContent=top[0]?top[0][0]:"—";
- if($id("dashPsychInsight")){
-   $id("dashPsychInsight").textContent=!analysed?"Add trades with a result and psychological reason to see your overall pattern.":top[0]?"Your most common issue is \"" + top[0][0] + "\" (" + top[0][1] + " trade" + (top[0][1]>1?"s":"") + "). Focus on preventing this before your next entry.":"No recurring psychological mistake detected in the recorded trades.";
- }
- if($id("dashPsychMistakes"))$id("dashPsychMistakes").innerHTML=top.length?top.slice(0,6).map(([reason,count])=>"<div class=\"mistake-row\"><span>"+reason+"</span><b>"+count+"</b></div>").join(""):"<div class=\"empty\">No SL-hit psychology data yet.</div>";
+ $("#pnlTrend").textContent=state.trades.length?`${state.trades.length} journaled trade${state.trades.length>1?"s":""}`:"No trades yet"; renderRecent(); renderSetups(); renderCharts();
 }
 function renderRecent(){
  const box=$("#recentTrades"); const arr=[...state.trades].reverse().slice(0,6);
@@ -87,7 +54,7 @@ function renderSetups(){
 function renderTable(){
  const q=$("#searchTrades").value.toLowerCase(), rf=$("#resultFilter").value, df=$("#directionFilter").value;
  const rows=state.trades.filter(t=>(!q||JSON.stringify(t).toLowerCase().includes(q))&&(rf==="all"||(rf==="win"&&t.pnl>0)||(rf==="loss"&&t.pnl<0))&&(df==="all"||t.direction===df)).reverse();
- $("#tradeTable").innerHTML=rows.length?rows.map(t=>`<tr><td>${t.date}</td><td><b>${t.symbol}</b></td><td>${t.direction}</td><td>${t.setup||"—"}</td><td>${t.entry}</td><td>${t.exit}</td><td class="${t.pnl>=0?"positive":"negative"}"><b>${money(t.pnl)}</b></td><td>${t.r.toFixed(2)}R</td><td>${t.emotion}</td><td><button class="delete-btn" onclick="deleteTrade('${t.id}')">×</button></td></tr>`).join(""):`<tr><td colspan="10" class="empty">No matching trades.</td></tr>`;
+ $("#tradeTable").innerHTML=rows.length?rows.map(t=>`<tr><td>${t.date}</td><td><b>${t.symbol}</b></td><td>${t.direction}</td><td>${t.setup||"—"}</td><td>${t.entry}</td><td>${t.exit}</td><td class="${t.pnl>=0?"positive":"negative"}"><b>${money(t.pnl)}</b></td><td>${t.r.toFixed(2)}R</td><td><button class="delete-btn" onclick="deleteTrade('${t.id}')">×</button></td></tr>`).join(""):`<tr><td colspan="10" class="empty">No matching trades.</td></tr>`;
 }
 function deleteTrade(id){if(confirm("Delete this journal entry?")){state.trades=state.trades.filter(t=>t.id!==id);save();renderTable();renderDashboard();renderAnalytics()}}
 ["searchTrades","resultFilter","directionFilter"].forEach(id=>$( "#"+id).addEventListener("input",renderTable));
@@ -99,7 +66,7 @@ $("#tradeForm").onsubmit=e=>{
  e.preventDefault();
  const entry=+$("#fEntry").value, exit=+$("#fExit").value, qty=+$("#fQty").value||1, risk=+$("#fRisk").value||1;
  let pnl=$("#fPnl").value===""?($("#fDirection").value==="Long"?(exit-entry):(entry-exit))*qty:+$("#fPnl").value;
- const t={id:crypto.randomUUID(),date:$("#fDate").value,symbol:$("#fSymbol").value.toUpperCase(),direction:$("#fDirection").value,setup:$("#fSetup").value.trim(),entry,exit,qty,risk,pnl,emotion:$("#fEmotion").value,outcome:$("#fOutcome").value,reason:$("#fReason").value,plan:$("#fPlan").value,confidence:+$("#fConfidence").value,notes:$("#fNotes").value.trim(),r:pnl/risk};
+ const t={id:crypto.randomUUID(),date:$("#fDate").value,symbol:$("#fSymbol").value.toUpperCase(),direction:$("#fDirection").value,setup:$("#fSetup").value.trim(),entry,exit,qty,risk,pnl,outcome:$("#fOutcome").value,plan:$("#fPlan").value,confidence:+$("#fConfidence").value,notes:$("#fNotes").value.trim(),r:pnl/risk};
  state.trades.push(t);save();e.target.reset();closeModal();renderDashboard();nav("trades");
 };
 
@@ -136,79 +103,6 @@ function drawResults(){
  ctx.fillStyle="#d92d20";ctx.fillRect(w/2+10,h-40,barW,-(h-80)*(c.losses.length/total));
  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--text");ctx.font="600 13px Inter";ctx.textAlign="center";ctx.fillText(`Winners ${c.wins.length}`,w/2-barW/2-10,h-15);ctx.fillText(`Losers ${c.losses.length}`,w/2+barW/2+10,h-15);
 }
-function updateChecklistUI(){const checks=[...document.querySelectorAll(".psy-check")];const done=checks.filter(x=>x.checked).length;const pct=checks.length?Math.round(done/checks.length*100):0;const p=document.getElementById("checklistProgress"),bar=document.getElementById("checkProgressBar");if(p)p.textContent=pct+"%";if(bar)bar.style.width=pct+"%";document.querySelectorAll(".check-category").forEach(c=>{const a=[...c.querySelectorAll(".psy-check")],d=a.filter(x=>x.checked).length,s=c.querySelector(".category-score");if(s)s.textContent=d+"/"+a.length})}
-document.addEventListener("change",e=>{if(e.target.classList.contains("psy-check"))updateChecklistUI()});document.getElementById("resetPsychChecks")?.addEventListener("click",()=>{document.querySelectorAll(".psy-check").forEach(x=>x.checked=false);updateChecklistUI()});updateChecklistUI();
-function initPostTradePsych(){
- const out=$("#postTradeOutcome"), reason=$("#postTradeReason"), hint=$("#postTradeHint"), saveBtn=$("#savePostTradePsych");
- if(!out||!reason||!saveBtn)return;
- const update=()=>{
-   fillReasonSelect(reason,out.value);
-   if(hint) hint.textContent=out.value==="SL Hit"?"SL hit selected: identify the psychological or execution mistake — or choose “Setup failed despite following plan” if it was a valid planned loss.":out.value==="Target Hit"?"Target hit selected: record the positive behavior that helped you execute the plan.":"Breakeven selected: record why the trade was protected or closed at breakeven.";
- };
- out.onchange=update; update();
- if(saveBtn) saveBtn.onclick=()=>{
-   const outcome=out.value, rsn=reason.value;
-   state.psych.push({date:new Date().toISOString().slice(0,10),score:outcome==="Target Hit"?100:outcome==="Breakeven"?70:40,mood:outcome==="SL Hit"?"Review":"Calm",confidence:outcome==="Target Hit"?8:6,discipline:outcome==="Target Hit"?9:outcome==="Breakeven"?7:4,outcome,reason:rsn,fomo:"Low",note:`Trade Result: ${outcome} · Psychological Reason: ${rsn}`});
-   save(); renderPsych();
- };
-}
-function renderPsych(){
- const logs=[...state.psych].reverse().slice(0,10), latest=logs[0];
- $("#psychScore").textContent=latest?((latest.score||0)+"%"):"0%";
- const avg=logs.length?Math.round(logs.reduce((a,x)=>a+(x.discipline||x.score/10||0),0)/logs.length):0;
- $("#psychDiscipline").textContent=logs.length?avg+"/10":"—";
- const fomoCount=logs.filter(x=>x.mood==="FOMO"||x.fomo==="High").length;
- $("#psychFomo").textContent=logs.length?Math.max(0,Math.round((1-fomoCount/logs.length)*100))+"%":"—";
- const greedScores=logs.map(x=>{
-   const mood=String(x.mood||"").toLowerCase();
-   const reason=String(x.reason||"").toLowerCase();
-   if(mood==="greedy") return 2;
-   if(/greed|overtraded|overtrade|added to losing|position size too large|risk was too high|took profit too early|chased price/.test(reason)) return 5;
-   return 10;
- });
- const greedAvg=greedScores.length?Math.round(greedScores.reduce((a,b)=>a+b,0)/greedScores.length*10):0;
- $("#psychGreed").textContent=logs.length?greedAvg+"%":"—";
- const counts={FOMO:0,Revenge:0,Fear:0,Greed:0,Anxious:0};
- logs.forEach(x=>{if(counts[x.mood]!==undefined)counts[x.mood]++;if(x.revenge==="High")counts.Revenge++});
- const mistake=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
- $("#psychMistake").textContent=mistake&&mistake[1]?mistake[0]:"—";
- 
- if($("#psychInsight")) $("#psychInsight").innerHTML=latest?`<p><strong>Latest mood:</strong> ${latest.mood||"Not recorded"}.</p><p><strong>Reflection:</strong> ${latest.note||"Add a reflection after your session."}</p>`:`<p>Start your first psychology check-in. Track mood, confidence, discipline, FOMO and revenge urges to discover patterns over time.</p>`;
- drawPsychChart();
-}
-$("#savePsych")?.onclick=()=>{const checks=[...$(".psy-check")],score=Math.round(checks.filter(x=>x.checked).length/checks.length*100);state.psych.push({date:new Date().toISOString().slice(0,10),score,note:score===100?"Full plan readiness":"Review the unchecked items before trading"});save();renderPsych()};
-const psychReasons={
-"Target Hit":["Followed my plan","Waited for confirmation","Stayed patient","Managed risk correctly","Followed entry rules","Followed exit rules","Stayed disciplined","Did not chase price","Stayed calm","Trusted my tested setup","Took profit according to plan","Avoided overtrading","Good market reading","Good execution","Accepted the planned outcome"],
-"SL Hit":["Entered too early","Entered too late","FOMO entry","Revenge trade","Chased price","Ignored my setup rules","Ignored confirmation","Wrong market direction","Misread market structure","Wrong support/resistance","Stop-loss too tight","Stop-loss placed poorly","Position size too large","Risk was too high","Moved stop-loss","Removed/ignored stop-loss","Entered during high volatility","Ignored important news","Poor liquidity/slippage","Overtraded","Boredom trade","Fear-based entry","Greed-based entry","Low confidence","Low focus","Poor sleep/low energy","Emotional decision","Did not accept the loss","Added to losing trade","Ignored higher timeframe","Ignored invalidation","Entered without a clear thesis","Setup was not actually valid","Changed plan impulsively","Trading outside my system","Market condition changed","Unexpected market move","Wrong time for trading","Setup failed despite following plan"],
-"Breakeven":["Protected capital as planned","Moved to breakeven according to rules","Market lacked follow-through","Took defensive exit","Setup became invalid","Reduced risk correctly"]
-};
-function fillReasonSelect(select, outcome){
- if(!select)return;
- select.innerHTML=(psychReasons[outcome]||[]).map(x=>`<option>${x}</option>`).join("");
-}
-function updatePsychReasons(){
- const out=$("#pOutcome"), reason=$("#pReason"); if(!out||!reason)return;
- fillReasonSelect(reason,out.value);
-}
-function updateTradeReasons(){
- const out=$("#fOutcome"), reason=$("#fReason"); if(!out||!reason)return;
- fillReasonSelect(reason,out.value);
-}
-function openPsychModal(){ $("#psychModal").classList.add("show"); $("#pDate").value=new Date().toISOString().slice(0,10); updatePsychReasons() }
-function closePsychModal(){ $("#psychModal").classList.remove("show") }
-$("#pOutcome")?.addEventListener("change",updatePsychReasons);
-$("#fOutcome")?.addEventListener("change",updateTradeReasons);
-updateTradeReasons();
-initPostTradePsych();
-$("#addPsychBtn").onclick=openPsychModal; $("#closePsychModal").onclick=closePsychModal; $("#cancelPsychModal").onclick=closePsychModal;
-$("#psychForm").onsubmit=e=>{e.preventDefault();const mood=$("#pMood").value,confidence=+$("#pConfidence").value,discipline=+$("#pDiscipline").value,outcome=$("#pOutcome").value,reason=$("#pReason").value,note=$("#pNote").value.trim()||"No note added";state.psych.push({date:$("#pDate").value,score:Math.round((discipline+confidence)/2*10),mood,confidence,discipline,outcome,reason,fomo:mood==="FOMO"?"High":"Low",note});save();e.target.reset();closePsychModal();renderPsych()};
-function drawPsychChart(){
- const c=$("#psychChart");if(!c)return;const ctx=c.getContext("2d"),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight||230;c.width=w*d;c.height=h*d;ctx.scale(d,d);ctx.clearRect(0,0,w,h);
- const logs=state.psych.slice(-7);if(!logs.length){ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--muted");ctx.fillText("Add psychology check-ins to see your trend.",20,h/2);return}
- const max=10,step=w/Math.max(logs.length-1,1);ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--line");for(let i=1;i<5;i++){let y=i*h/5;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
- ctx.strokeStyle="#635bff";ctx.lineWidth=3;ctx.beginPath();logs.forEach((x,i)=>{const v=x.discipline||Math.round((x.score||0)/10),px=i*step,py=h-30-(v/max)*(h-55);i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke();
-}
-$("#saveQuickPsych")?.onclick=()=>{const f=$("#quickFomo").value,r=$("#quickRevenge").value,e=$("#quickEnergy").value,s=$("#quickSleep").value;state.psych.push({date:new Date().toISOString().slice(0,10),score:Math.round(((f==="Low"?10:f==="Medium"?6:2)+(r==="Low"?10:r==="Medium"?6:2)+(e==="High"?10:e==="Normal"?7:4)+(s==="Good"?10:s==="Average"?7:4))/4*10),mood:f==="High"?"FOMO":r==="High"?"Revenge":"Calm",confidence:e==="High"?9:e==="Normal"?7:4,discipline:s==="Good"?9:s==="Average"?7:4,fomo:f,revenge:r,energy:e,sleep:s,note:`FOMO: ${f} · Revenge urge: ${r} · Energy: ${e} · Sleep: ${s}`});save();renderPsych()};
 
 function renderRules(){
  $("#rulesGrid").innerHTML=state.rules.map((r,i)=>`<article class="rule-card"><button onclick="deleteRule(${i})">×</button><h3>${r.title}</h3><p>${r.text}</p></article>`).join("");
