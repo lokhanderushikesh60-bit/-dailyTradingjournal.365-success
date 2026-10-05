@@ -17,3 +17,6 @@
 
 /* Dashboard overall trade psychology */
 .psychology-overview-grid{margin-bottom:18px}.psych-overview-score{display:flex;align-items:baseline;gap:10px;margin:-4px 0 16px}.psych-overview-score strong{font-size:34px}.psych-overview-score span{color:var(--muted);font-size:12px}.psych-overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.psych-overview-grid div{background:var(--surface2);border-radius:10px;padding:12px}.psych-overview-grid b,.psych-overview-grid span{display:block}.psych-overview-grid b{font-size:16px;margin-bottom:4px}.psych-overview-grid span{font-size:10px;color:var(--muted)}.psych-overview-insight{margin-top:14px;padding:12px;border-radius:10px;background:rgba(99,91,255,.07);font-size:12px;line-height:1.5}.mistake-list{display:grid;gap:8px}.mistake-row{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;background:var(--surface2);border-radius:9px;font-size:12px}.mistake-row b{font-size:12px}@media(max-width:800px){.psych-overview-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* Full-width pre-trade checklist after removing Psychology Log side panel */
+.psychology-checklist-grid{grid-template-columns:1fr}
