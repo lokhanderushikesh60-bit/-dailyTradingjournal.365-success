@@ -50,7 +50,7 @@ function renderSetups(){
  const groups={}; state.trades.forEach(t=>{const k=t.setup||"Unspecified";groups[k]=(groups[k]||[]);groups[k].push(t.pnl)});
  const vals=Object.entries(groups).map(([k,v])=>({k,p:v.reduce((a,b)=>a+b,0)})).sort((a,b)=>b.p-a.p).slice(0,6);
  const max=Math.max(...vals.map(x=>Math.abs(x.p)),1);
- $("#setupPerformance").innerHTML=vals.length?vals.map(x=>`<div class="setup-row"><div class="setup-label"><span>${x.k}</span><b class="${x.p>=0?"positive":"negative"}">${money(x.p)}</b></div><div class="bar"><i style="width:${Math.max(5,Math.abs(x.p)/max*100)}%"></i></div></div>`).join(""):`<div class="empty">Setup performance will appear after you journal trades.</div>`;
+ const setupBox=$("#setupPerformance"); if(!setupBox)return; setupBox.innerHTML=vals.length?vals.map(x=>`<div class="setup-row"><div class="setup-label"><span>${x.k}</span><b class="${x.p>=0?"positive":"negative"}">${money(x.p)}</b></div><div class="bar"><i style="width:${Math.max(5,Math.abs(x.p)/max*100)}%"></i></div></div>`).join(""):`<div class="empty">Setup performance will appear after you journal trades.</div>`;
 }
 function renderTable(){
  const q=$("#searchTrades").value.toLowerCase(), rf=$("#resultFilter").value, df=$("#directionFilter").value;
@@ -83,7 +83,7 @@ $("#tradeForm").addEventListener("submit",e=>{
    id:(crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2)),
    date,symbol,direction,setup:$("#fSetup").value.trim(),entry,exit,qty,risk,pnl,
    outcome:$("#fOutcome").value,plan:$("#fPlan").value,confidence:Number($("#fConfidence").value)||7,
-   notes:$("#fNotes").value.trim(),r:pnl/risk
+   notes:$("#fNotes").value.trim(),fear:Number($("#fFear").value)||1,greed:Number($("#fGreed").value)||1,discipline:Number($("#fDiscipline").value)||8,emotion:$("#fEmotion").value,psychology:$("#fPsychology").value.trim(),r:pnl/risk
   };
   state.trades.push(t);
   save();
